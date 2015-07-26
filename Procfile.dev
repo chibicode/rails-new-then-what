@@ -1,0 +1,3 @@
+web: bundle exec puma -C config/puma.rb
+webpack: $(npm bin)/webpack-dev-server --inline
+browsersync: $(npm bin)/browser-sync --config bs-config.js start

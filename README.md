@@ -1,8 +1,11 @@
-![](pablo.png)
+![](http://cl.ly/image/3u2g0B422J1F/pablo.png)
 
 I prefer documenting bootstrap steps over creating templates/automation scripts. Why? Because sometimes I might want to customize an app generated from a script, but without documentation I'd have no idea how to customize it. But if there's documentation on how to bootstrap apps, there's often no need for automations scripts - just follow the steps! No need to keep documentation and scripts up to date with each other.
 
-That said, this repo contains the bootstraped Rails repo.
+That said, this repo contains the bootstraped Rails repo. To use,
+
+1.) Do a project wide replace of `app-name`
+2.) Do a project wide replace of `AppName`
 
 ### Make sure Ruby/Rails are up to date
 

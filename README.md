@@ -62,20 +62,7 @@ Optionally, copy `.rubocop.yml`, `.scss-lint.yml`, etc from the root.
 
 ### Edit Gemfile
 
-- `figaro` is helpful for setting config on Heroku.
-
-```ruby
-ruby "<ruby-version>"
-
-gem "puma"
-gem "foreman"
-gem "figaro"
-gem "slim-rails"
-
-group :production do
-  gem "rails_12factor"
-end
-```
+Change ruby version.
 
 ### Initialize Puma
 
@@ -134,33 +121,6 @@ config.active_record.schema_format = :sql
 ```
 
 Then run `rake db:migrate` to create `structure.sql`.
-
-### Add Development/Test Gems
-
-Example:
-
-```ruby
-group :development, :test do
-  gem "web-console", "~> 2.0"
-  gem "spring"
-  gem "spring-commands-rspec"
-  gem "rspec-rails"
-  gem "jazz_fingers"
-  gem "priscilla"
-end
-
-group :development do
-  gem "quiet_assets"
-  gem "annotate"
-  gem "letter_opener"
-  gem "bullet"
-end
-
-group :test do
-  gem "factory_girl_rails"
-  gem "database_cleaner"
-end
-```
 
 ### Configure Rspec
 
@@ -234,13 +194,48 @@ RSpec.describe ApplicationController do
 end
 ```
 
-### Configure Node and Webpack (Replace Asset Pipeline)
+### Configure Webpack (Replace Asset Pipeline)
 
-TBD
+The basic [package.json](package.json) is provided. You then need to set up BrowserSync and Webpack. Use the configs from [this repo](http://github.com/chibicode/webpack-notes).
+
+Add `frontend/dist`, the target for webpack, to path on `config/initializers/assets.rb`:
+
+```ruby
+Rails.application.config.assets.paths << Rails.root.join("frontend", "dist")
+```
+
+Modify `application.js` to use the generated file:
+
+```
+// require frontend
+```
+
+Remove CSS import from `application.html.erb`:
+
+```erb
+<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+```
 
 ### Configure BrowserSync
 
-TODO: http://qiita.com/hiro-su/items/11d0108c26ee147b20e3
+Generate the script:
+
+```
+browser-sync init
+```
+
+Set up files to watch:
+
+```
+files": [""app/views/**/*"],
+```
+
+Proxy the port:
+
+```
+"proxy": "localhost:5000"
+"port": 3002,
+```
 
 ### Configure Development Procfile
 
@@ -256,10 +251,17 @@ Create `Procfile.dev`:
 
 ```
 web: bundle exec puma -C config/puma.rb
-webpack: npm run webpack-dev-server --inline
-browsersync: npm run browser-sync --config bs-config.js start
+webpack: $(npm bin)/webpack-dev-server --inline
+browsersync: $(npm bin)/browser-sync --config bs-config.js start
 ```
 
 ### Add Services
 
-TBD
+Here are some of my favorite addons:
+
+- Continuous Deployment: [CodeShip](http://codeship.io/)
+- Bug Tracking: [BugSnag](https://bugsnag.com/)
+- Logging: [LogEntries](https://logentries.com/)
+- Performance Tracking: [Skylight](https://www.skylight.io/)
+- Background Queues: [Sidekick](http://sidekiq.org/) with [Heroku Redis](https://elements.heroku.com/addons/heroku-redis)
+- Fragment Caching Backend: [Memcachier](https://www.memcachier.com/)

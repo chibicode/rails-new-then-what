@@ -6,11 +6,6 @@ I prefer documenting bootstrap steps over creating templates/automation scripts.
 
 The downside is that sometimes the steps can take long and you might forget to perform some steps.
 
-### Keep This Document Updated
-
-Once in a while, update linter configs for Atom:
-
-
 ### Make sure Ruby/Rails are up to date
 
 ```sh
@@ -66,3 +61,111 @@ windows:
 Copy files under the [src](src) directory. Optionally modify `.ruby-version` and `.env`.
 
 Optionally, copy `.rubocop.yml`, `.scss-lint.yml`, etc from the root.
+
+### Edit Gemfile
+
+- `figaro` is helpful for setting config on Heroku.
+
+```ruby
+ruby "<ruby-version>"
+
+gem "puma"
+gem "foreman"
+gem "figaro"
+gem "slim-rails"
+
+group :production do
+  gem "rails_12factor"
+end
+```
+
+### Initialize Puma
+
+Add `config/puma.rb` and copy the contents from [this page](https://devcenter.heroku.com/articles/deploying-rails-applications-with-the-puma-web-server#config).
+
+#### :warning: Set # of workers to 1
+
+Set the number of workers to 1 locally so that `web-console` works (see [here](https://github.com/rails/web-console/pull/109) and [here](https://github.com/charliesome/better_errors#unicorn-puma-and-other-multi-worker-servers))
+
+```
+workers Integer(ENV['WEB_CONCURRENCY'] || 1)
+```
+
+### Create Database
+
+```sh
+rake db:create
+```
+
+I also try to add `<app-name>_development` to [Postico.app](https://eggerapps.at/postico/).
+
+Also for some reason, when using Postgres.app version 9.4, I need to uncomment this line on `database.yml`:
+
+```yml
+host: localhost
+```
+
+### Add Root Controller
+
+- Create `HomeController`
+- Set root route
+- Add `views/home/index.slim`
+
+At this point,
+
+```
+foreman start
+```
+
+and accessing [http://localhost:5000](http://localhost:5000) should give you a blank page.
+
+### Edit `application.rb`
+
+Set time zone:
+
+```ruby
+config.time_zone = "Pacific Time (US & Canada)"
+```
+
+Set schema format:
+
+```ruby
+config.active_record.schema_format = :sql
+```
+
+### Add Development/Test Gems
+
+Example:
+
+```ruby
+group :development, :test do
+  gem "web-console", "~> 2.0"
+  gem "spring"
+  gem "spring-commands-rspec"
+  gem "rspec-rails"
+  gem "jazz_fingers"
+  gem "priscilla"
+end
+
+group :development do
+  gem "quiet_assets"
+  gem "annotate"
+  gem "letter_opener"
+  gem "bullet"
+end
+
+group :test do
+  gem "factory_girl_rails"
+  gem "database_cleaner"
+end
+```
+
+### Configure Rspec
+
+TBD
+
+### Configure Node
+
+TBD
+
+Note to self: `npm run browser-sync ...`

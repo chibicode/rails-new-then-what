@@ -97,11 +97,13 @@ rake db:create
 
 I also try to add `<app-name>_development` to [Postico.app](https://eggerapps.at/postico/).
 
-Also for some reason, when using Postgres.app version 9.4, I need to uncomment this line on `database.yml`:
+:warning: Also for some reason, when using Postgres.app version 9.4, I need to uncomment this line on `database.yml`:
 
 ```yml
 host: localhost
 ```
+
+AND add the above line under `test:` as well.
 
 ### Add Root Controller
 
@@ -130,6 +132,8 @@ Set schema format:
 ```ruby
 config.active_record.schema_format = :sql
 ```
+
+Then run `rake db:migrate` to create `structure.sql`.
 
 ### Add Development/Test Gems
 
@@ -160,10 +164,102 @@ end
 
 ### Configure Rspec
 
+Run the initializer:
+
+```sh
+rails g rspec:install
+```
+
+Generate binstubs:
+
+```sh
+bundle exec spring binstub rspec
+```
+
+Some things you should add to `spec_helper.rb`:
+
+```ruby
+require "active_support/all"
+```
+
+Some things you should add to `rails_helper.rb`:
+
+```ruby
+require 'factory_girl_rails'
+require 'database_cleaner'
+
+# Uncomment:
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+
+# Remove the line on `fixture_path`, and set transactional fixtures to false:
+config.use_transactional_fixtures = true
+```
+
+Add `spec/support/configure_factory_girl.rb`:
+
+```ruby
+RSpec.configure do |config|
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, js: true) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
+  config.include FactoryGirl::Syntax::Methods
+end
+```
+
+Test that this works by creating `spec/controllers/application_controller_spec.rb`:
+
+```ruby
+require "rails_helper"
+
+RSpec.describe ApplicationController do
+  it "works" do
+  end
+end
+```
+
+### Configure Node and Webpack (Replace Asset Pipeline)
+
 TBD
 
-### Configure Node
+### Configure BrowserSync
+
+TODO: http://qiita.com/hiro-su/items/11d0108c26ee147b20e3
+
+### Configure Development Procfile
+
+Create `bin/server` and `chmod +x bin/server`:
+
+```sh
+#!/bin/sh
+
+foreman start -f Procfile.dev
+```
+
+Create `Procfile.dev`:
+
+```
+web: bundle exec puma -C config/puma.rb
+webpack: npm run webpack-dev-server --inline
+browsersync: npm run browser-sync --config bs-config.js start
+```
+
+### Add Services
 
 TBD
-
-Note to self: `npm run browser-sync ...`

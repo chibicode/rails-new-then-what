@@ -2,7 +2,7 @@
 
 I prefer documenting bootstrap steps over creating templates/automation scripts. Why? Because sometimes I might want to customize an app generated from a script, but without documentation I'd have no idea how to customize it. But if there's documentation on how to bootstrap apps, there's often no need for automations scripts - just follow the steps! No need to keep documentation and scripts up to date with each other.
 
-The downside is that sometimes the steps can take long and you might forget to perform some steps.
+That said, this repo contains the bootstraped Rails repo.
 
 ### Make sure Ruby/Rails are up to date
 
@@ -56,9 +56,13 @@ windows:
 
 ### Add Root-Level Files
 
-Copy files under the [src](src) directory. Optionally modify `.ruby-version` and `.env`.
+Copy root level files from this directory. Optionally modify `.ruby-version` and `.env`.
 
 Optionally, copy `.rubocop.yml`, `.scss-lint.yml`, etc from the root.
+
+### Set `.gitignore`
+
+Need to ignore `node_modules`.
 
 ### Edit Gemfile
 
@@ -216,7 +220,34 @@ Remove CSS import from `application.html.erb`:
 <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
 ```
 
+Remove Turbolinks - apparently it's incompatible with BrowserSync (TODO: figure out a way to add it back later)
+
+```
+<%= javascript_include_tag 'application' %>
+```
+
+Install webpack dev server:
+
+```
+npm i --save-dev webpack-dev-server
+```
+
+Add `app.js`:
+
+```js
+// require("./stylesheets/app.scss");
+
+import $ from 'jquery';
+require("imports?jQuery=jquery!jquery-ujs/src/rails.js");
+```
+
 ### Configure BrowserSync
+
+Install:
+
+```
+npm i --save-dev browser-sync
+```
 
 Generate the script:
 
@@ -227,14 +258,13 @@ browser-sync init
 Set up files to watch:
 
 ```
-files": [""app/views/**/*"],
+files: ["app/views/**/*"],
 ```
 
 Proxy the port:
 
 ```
 "proxy": "localhost:5000"
-"port": 3002,
 ```
 
 ### Configure Development Procfile

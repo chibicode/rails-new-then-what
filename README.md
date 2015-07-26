@@ -1,6 +1,4 @@
-# rails-new-then-what
-
-What I usually do after running "rails new", so I don't forget.
+![](pablo.png)
 
 I prefer documenting bootstrap steps over creating templates/automation scripts. Why? Because sometimes I might want to customize an app generated from a script, but without documentation I'd have no idea how to customize it. But if there's documentation on how to bootstrap apps, there's often no need for automations scripts - just follow the steps! No need to keep documentation and scripts up to date with each other.
 

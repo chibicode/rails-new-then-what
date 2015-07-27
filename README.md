@@ -280,13 +280,7 @@ Create `bin/server` and `chmod +x bin/server`:
 foreman start -f Procfile.dev
 ```
 
-Create `Procfile.dev`:
-
-```
-web: bundle exec puma -C config/puma.rb
-webpack: $(npm bin)/webpack-dev-server --inline
-browsersync: $(npm bin)/browser-sync --config bs-config.js start
-```
+Create [Procfile.dev](Procfile.dev).
 
 ### Add Services
 

@@ -282,6 +282,12 @@ foreman start -f Procfile.dev
 
 Create [Procfile.dev](Procfile.dev).
 
+### Set buildpacks
+
+```
+heroku buildpacks:set https://github.com/ddollar/heroku-buildpack-multi.git
+```
+
 ### Add Services
 
 Here are some of my favorite addons:
